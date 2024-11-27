@@ -3,192 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="EngageSense - Analyze audio and measure audience engagement seamlessly.">
-  <title>EngageSense</title>
-  <!-- Base URL for GitHub Pages -->
-  <base href="/<YOUR_REPO_NAME>/">
-  <link rel="stylesheet" href="assets/styles.css">
-  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <title>EngageSense - Real-Time Engagement Tracking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.5.4/dist/socket.io.min.js"></script>
   <style>
-    /* Embedded color scheme */
-    :root {
-      --black: #000000;
-      --white: #ffffff;
-      --dark-blue: #001f3f;
-      --dark-purple: #4b0082;
-    }
-
     body {
+      font-family: 'Poppins', sans-serif;
       margin: 0;
-      font-family: Arial, sans-serif;
-      color: var(--white);
-      background-color: var(--black);
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-    }
-
-    header, section {
-      padding: 40px 20px;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+      scroll-behavior: smooth;
     }
 
     header {
-      background-color: var(--dark-blue);
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 20px;
     }
 
-    section {
-      display: none;
-      background-color: var(--dark-purple);
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
     }
 
-    .visible {
-      display: block;
+    nav {
+      background-color: #005a9e;
+      padding: 10px;
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
     }
 
-    h1, h2 {
-      color: var(--white);
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 500;
     }
 
-    p {
-      color: var(--white);
-      margin: 10px 0;
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
     }
 
     button {
-      background-color: var(--white);
-      color: var(--black);
-      padding: 10px 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
       margin: 10px;
       transition: all 0.3s ease;
     }
 
     button:hover {
-      background-color: var(--dark-blue);
-      color: var(--white);
+      background-color: #45a049;
     }
 
-    progress {
+    table {
       width: 100%;
-      height: 20px;
-      background-color: var(--white);
       margin: 20px 0;
+      border-collapse: collapse;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    footer {
-      background-color: var(--dark-blue);
-      padding: 20px 0;
+    th, td {
+      padding: 12px;
       text-align: center;
+      border: 1px solid #ddd;
     }
 
-    footer a {
-      color: var(--white);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
+    th {
+      background-color: #4CAF50;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <!-- Welcome Section -->
-  <header id="welcome" class="visible">
-    <div class="container">
-      <h1>Welcome to EngageSense</h1>
-      <p>Analyze audio and uncover insights into audience engagement with cutting-edge metrics.</p>
-      <button id="start-btn" onclick="navigateTo('input')">Get Started</button>
-      <button id="demo-btn" onclick="startDemo()">Try Demo</button>
-    </div>
+  <!-- Header -->
+  <header>
+    <h1>EngageSense</h1>
+    <p>Track Real-Time Physical, Mental, Emotional, and Spiritual Engagement</p>
   </header>
 
-  <!-- Input Section -->
-  <section id="input">
-    <div class="container">
-      <h2>Upload or Record</h2>
-      <input type="file" id="audio-upload" accept=".mp3, .mp4, .wav" onchange="handleFileUpload(event)" />
-      <p id="upload-status">No file selected.</p>
-      <button id="record-btn" onclick="startRecording()">Record Audio</button>
-      <progress id="upload-progress" value="0" max="100"></progress>
-      <button onclick="navigateTo('analysis')" id="next-btn">Next</button>
-    </div>
-  </section>
+  <!-- Navigation -->
+  <nav>
+    <a href="#dataInputScreen">Data Input</a>
+    <a href="#analysisScreen">Analysis</a>
+    <a href="#feedback">Feedback</a>
+  </nav>
 
-  <!-- Analysis Section -->
-  <section id="analysis">
-    <div class="container">
-      <h2>Audio Analysis</h2>
-      <canvas id="waveform" width="600" height="200"></canvas>
-      <p>Processing your audio...</p>
-      <div id="metrics">
-        <p>Overall Engagement: <span id="engagement-score">85%</span></p>
-        <p>Emotional Intensity: <span id="emotional-intensity">High</span></p>
-        <p>Sentiment Analysis: <span id="sentiment">Positive</span></p>
-        <p>Physical Engagement: <span id="physical-engagement">80%</span></p>
-        <p>Mental Engagement: <span id="mental-engagement">75%</span></p>
-        <p>Spiritual Engagement: <span id="spiritual-engagement">90%</span></p>
-      </div>
-      <button onclick="navigateTo('results')" id="results-btn">View Results</button>
-    </div>
-  </section>
+  <!-- Content -->
+  <div class="container">
+    <!-- Data Input Screen -->
+    <section id="dataInputScreen">
+      <h2>Data Input</h2>
+      <div class="status">Connecting to wearable devices...</div>
+      <button id="startStream">Start Live Data Stream</button>
+      <canvas id="liveDataChart" width="600" height="300"></canvas>
+    </section>
 
-  <!-- Results Section -->
-  <section id="results">
-    <div class="container">
-      <h2>Results Summary</h2>
-      <div id="summary">
-        <p><strong>Session Analysis Complete!</strong></p>
-        <p>Your audience engagement score was <strong>85%</strong>.</p>
-      </div>
-      <div id="recommendations">
-        <p>To improve engagement, consider making content more interactive and emotionally compelling.</p>
-      </div>
-      <button onclick="downloadReport('pdf')">Download PDF</button>
-      <button onclick="downloadReport('csv')">Download CSV</button>
-    </div>
-  </section>
+    <!-- Analysis Screen -->
+    <section id="analysisScreen">
+      <h2>Analysis</h2>
+      <canvas id="analysisChart" width="600" height="300"></canvas>
+    </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2024 EngageSense. All rights reserved.</p>
-    <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a>
-  </footer>
+    <!-- Feedback Section -->
+    <section id="feedback">
+      <h2>Feedback</h2>
+      <form id="feedbackForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="feedback">Feedback:</label>
+        <textarea id="feedback" name="feedback" required></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+  </div>
 
   <script>
-    function navigateTo(sectionId) {
-      document.querySelectorAll('header, section').forEach(el => el.classList.remove('visible'));
-      document.getElementById(sectionId).classList.add('visible');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const liveDataChartCtx = document.getElementById('liveDataChart').getContext('2d');
+      const analysisChartCtx = document.getElementById('analysisChart').getContext('2d');
+      const socket = io('https://your-live-data-stream-url'); // Replace with actual URL
 
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        document.getElementById('upload-status').textContent = `File selected: ${file.name}`;
-        updateProgress(100);
-      }
-    }
+      const liveDataChart = new Chart(liveDataChartCtx, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Live Engagement', data: [], borderColor: 'blue' }] },
+        options: { scales: { x: { beginAtZero: true }, y: { beginAtZero: true } } }
+      });
 
-    function updateProgress(value) {
-      document.getElementById('upload-progress').value = value;
-    }
+      const analysisChart = new Chart(analysisChartCtx, {
+        type: 'bar',
+        data: { labels: ['Physical', 'Mental', 'Emotional', 'Spiritual'], datasets: [{ data: [80, 70, 90, 85] }] },
+        options: { responsive: true }
+      });
 
-    function startRecording() {
-      alert('Recording feature coming soon.');
-    }
+      socket.on('live-data', (data) => {
+        liveDataChart.data.labels.push(data.timestamp);
+        liveDataChart.data.datasets[0].data.push(data.value);
+        liveDataChart.update();
+      });
 
-    function startDemo() {
-      alert('Demo mode activated. Enjoy exploring EngageSense!');
-      navigateTo('analysis');
-    }
-
-    function downloadReport(type) {
-      alert(`Downloading ${type.toUpperCase()} report...`);
-    }
+      document.getElementById('feedbackForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Thank you for your feedback!');
+      });
+    });
   </script>
 </body>
 </html>
