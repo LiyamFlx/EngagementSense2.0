@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EngageSense - Comprehensive Dashboard</title>
+  <title>EngageSense - Upload & Record Audio</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --black: #121212;
@@ -23,243 +22,198 @@
       margin: 0;
       background-color: var(--black);
       color: var(--white);
-      overflow-x: hidden;
     }
-
-    header {
-      background-color: var(--dark-grey);
-      text-align: center;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-
-    header p {
-      color: var(--grey);
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .controls, .call-to-action {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin: 20px 0;
-    }
-
-    button {
-      background-color: var(--purple);
-      border: none;
-      color: var(--white);
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em;
-      transition: background-color 0.3s;
-    }
-
-    button:hover {
-      background-color: #5a44a1;
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      margin: 20px 0;
-    }
-
-    .card {
-      background-color: var(--dark-grey);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 1.5em;
-    }
-
-    .progress-bar {
-      width: 100%;
-      background: var(--grey);
-      border-radius: 12px;
-      height: 10px;
-      margin: 10px 0;
-      position: relative;
-    }
-
-    .progress-bar span {
-      height: 10px;
-      border-radius: 12px;
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .progress-bar span.physical { width: 80%; background: var(--blue); }
-    .progress-bar span.mental { width: 75%; background: var(--purple); }
-    .progress-bar span.spiritual { width: 90%; background: var(--green); }
-
-    canvas {
-      width: 100%;
-      height: auto;
-    }
-
-    .sentiment span { font-weight: bold; color: var(--green); }
 
     .upload-section {
       text-align: center;
-      margin: 20px 0;
+      padding: 40px;
     }
 
-    .drag-drop-box {
+    .upload-section h2 {
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      color: var(--white);
+    }
+
+    .drop-zone {
       border: 2px dashed var(--purple);
       border-radius: 12px;
-      padding: 30px;
-      margin: 20px 0;
+      padding: 40px;
+      margin: 20px auto;
       background-color: var(--dark-grey);
       cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .drop-zone:hover {
+      background-color: #292929;
+      border-color: var(--blue);
+    }
+
+    .drop-zone p {
+      margin: 0;
+      font-size: 1em;
+      color: var(--grey);
     }
 
     .file-info {
       margin-top: 10px;
       font-size: 0.9em;
-      color: var(--grey);
+      color: var(--green);
     }
 
-    .tooltip {
+    .record-audio-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background-color: var(--purple);
+      color: var(--white);
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .record-audio-btn:hover {
+      background-color: #5a44a1;
+    }
+
+    .progress-bar-container {
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+    }
+
+    .progress-bar {
+      width: 80%;
+      height: 10px;
       background-color: var(--grey);
-      color: var(--black);
-      padding: 5px 10px;
       border-radius: 5px;
-      font-size: 0.9em;
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin: 10px auto;
+      position: relative;
+    }
+
+    .progress-bar span {
+      height: 100%;
+      display: block;
+      border-radius: 5px;
+      background-color: var(--blue);
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    .error-message {
+      color: var(--red);
+      margin-top: 10px;
       display: none;
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <h1>EngageSense</h1>
-    <p>Comprehensive Engagement Analysis Platform</p>
-  </header>
-
-  <!-- Call-to-Action -->
-  <div class="call-to-action">
-    <button id="getStarted">Get Started</button>
-  </div>
-
   <!-- Upload Section -->
-  <div class="container">
-    <div class="upload-section">
-      <h2>Upload or Record Audio</h2>
-      <div class="drag-drop-box" id="dragDropArea">
-        <p>Drag and drop your audio file here or click to select</p>
-        <p class="file-info" id="fileInfo"></p>
-      </div>
-      <button id="recordAudio">Record Audio</button>
-      <p id="recordingStatus"></p>
+  <div class="upload-section">
+    <h2>Upload or Record Audio</h2>
+    <div class="drop-zone" id="dropZone">
+      <p id="dropZoneText">Drag and drop your audio file here</p>
+      <p class="file-info" id="fileInfo"></p>
     </div>
-  </div>
-
-  <!-- Dashboard -->
-  <div class="container">
-    <div class="dashboard">
-      <!-- Overall Engagement -->
-      <div class="card">
-        <h3>Overall Engagement</h3>
-        <p class="percentage">85%</p>
-        <p>Data sourced from live analysis</p>
+    <button class="record-audio-btn" id="recordAudio">Record Audio</button>
+    <div class="progress-bar-container" id="progressBarContainer">
+      <div class="progress-bar">
+        <span id="progress"></span>
       </div>
-
-      <!-- Sentiment Analysis -->
-      <div class="card">
-        <h3>Sentiment Analysis</h3>
-        <p>Emotional Intensity: High</p>
-        <div class="sentiment">
-          <span>Positive</span>
-        </div>
-      </div>
-
-      <!-- Engagement Breakdown -->
-      <div class="card">
-        <h3>Engagement Breakdown</h3>
-        <p>Physical Engagement</p>
-        <div class="progress-bar"><span class="physical"></span></div>
-        <p>Mental Engagement</p>
-        <div class="progress-bar"><span class="mental"></span></div>
-        <p>Spiritual Engagement</p>
-        <div class="progress-bar"><span class="spiritual"></span></div>
-      </div>
-
-      <!-- Engagement Trends -->
-      <div class="card">
-        <h3>Engagement Trends</h3>
-        <canvas id="engagementChart"></canvas>
-      </div>
+      <p class="error-message" id="errorMessage"></p>
     </div>
   </div>
 
   <script>
-    // Chart.js setup for engagement trends
-    const ctx = document.getElementById('engagementChart').getContext('2d');
-    const engagementChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-          { label: 'Physical', data: [], borderColor: 'blue', fill: false },
-          { label: 'Mental', data: [], borderColor: 'purple', fill: false },
-          { label: 'Spiritual', data: [], borderColor: 'green', fill: false },
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: { display: true, text: 'Engagement Trends' }
-        },
-        scales: {
-          x: { beginAtZero: true },
-          y: { beginAtZero: true }
-        }
-      }
+    // Drag and Drop Functionality
+    const dropZone = document.getElementById("dropZone");
+    const fileInfo = document.getElementById("fileInfo");
+    const dropZoneText = document.getElementById("dropZoneText");
+    const errorMessage = document.getElementById("errorMessage");
+    const progressBarContainer = document.getElementById("progressBarContainer");
+    const progressBar = document.getElementById("progress");
+
+    // Handle Drag Over
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = "#292929";
+      dropZone.style.borderColor = "var(--blue)";
     });
 
-    // Drag-and-drop functionality
-    const dragDropArea = document.getElementById('dragDropArea');
-    const fileInfo = document.getElementById('fileInfo');
+    // Handle Drag Leave
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.style.backgroundColor = "var(--dark-grey)";
+      dropZone.style.borderColor = "var(--purple)";
+    });
 
-    dragDropArea.addEventListener('click', () => {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = '.mp3, .wav, .flac, .csv';
-      fileInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-          fileInfo.textContent = `Uploaded: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-        }
+    // Handle Drop
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
+    });
+
+    // Handle File Click
+    dropZone.addEventListener("click", () => {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".mp3,.wav,.flac";
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        handleFile(file);
       });
       fileInput.click();
     });
 
-    // Record Audio Button Functionality
-    document.getElementById('recordAudio').addEventListener('click', () => {
-      alert('Audio recording functionality coming soon!');
+    function handleFile(file) {
+      if (!file) return;
+
+      // Validate File Type
+      const allowedExtensions = ["audio/mpeg", "audio/wav", "audio/flac"];
+      if (!allowedExtensions.includes(file.type)) {
+        showError("Unsupported file type. Please upload .mp3, .wav, or .flac files.");
+        return;
+      }
+
+      // Validate File Size (Limit: 5MB)
+      const maxSizeInMB = 5;
+      if (file.size > maxSizeInMB * 1024 * 1024) {
+        showError(`File size exceeds ${maxSizeInMB} MB. Please upload a smaller file.`);
+        return;
+      }
+
+      // Display File Info
+      fileInfo.textContent = `File: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+      dropZoneText.textContent = "File uploaded successfully!";
+      errorMessage.style.display = "none";
+
+      // Simulate Upload Progress
+      simulateProgress();
+    }
+
+    function simulateProgress() {
+      progressBarContainer.style.display = "block";
+      let progressValue = 0;
+      const interval = setInterval(() => {
+        progressValue += 10;
+        progressBar.style.width = `${progressValue}%`;
+        if (progressValue >= 100) clearInterval(interval);
+      }, 200);
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = "block";
+    }
+
+    // Record Audio Functionality
+    const recordAudioButton = document.getElementById("recordAudio");
+    recordAudioButton.addEventListener("click", () => {
+      alert("Audio recording functionality coming soon!");
     });
   </script>
 </body>
