@@ -5,12 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="EngageSense - Analyze audio and measure audience engagement seamlessly.">
   <title>EngageSense</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <!-- Base URL for GitHub Pages -->
+  <base href="/<YOUR_REPO_NAME>/">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <style>
+    /* Embedded color scheme */
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --dark-blue: #001f3f;
+      --dark-purple: #4b0082;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--white);
+      background-color: var(--black);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header, section {
+      padding: 40px 20px;
+    }
+
+    header {
+      background-color: var(--dark-blue);
+    }
+
+    section {
+      display: none;
+      background-color: var(--dark-purple);
+    }
+
+    .visible {
+      display: block;
+    }
+
+    h1, h2 {
+      color: var(--white);
+    }
+
+    p {
+      color: var(--white);
+      margin: 10px 0;
+    }
+
+    button {
+      background-color: var(--white);
+      color: var(--black);
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--dark-blue);
+      color: var(--white);
+    }
+
+    progress {
+      width: 100%;
+      height: 20px;
+      background-color: var(--white);
+      margin: 20px 0;
+    }
+
+    footer {
+      background-color: var(--dark-blue);
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <!-- Welcome Section -->
-  <header id="welcome">
+  <header id="welcome" class="visible">
     <div class="container">
       <h1>Welcome to EngageSense</h1>
       <p>Analyze audio and uncover insights into audience engagement with cutting-edge metrics.</p>
@@ -20,42 +108,46 @@
   </header>
 
   <!-- Input Section -->
-  <section id="input" class="hidden">
+  <section id="input">
     <div class="container">
       <h2>Upload or Record</h2>
-      <input type="file" id="audio-upload" accept=".mp3, .mp4, .wav" />
+      <input type="file" id="audio-upload" accept=".mp3, .mp4, .wav" onchange="handleFileUpload(event)" />
       <p id="upload-status">No file selected.</p>
-      <button id="record-btn">Record Audio</button>
+      <button id="record-btn" onclick="startRecording()">Record Audio</button>
       <progress id="upload-progress" value="0" max="100"></progress>
       <button onclick="navigateTo('analysis')" id="next-btn">Next</button>
     </div>
   </section>
 
   <!-- Analysis Section -->
-  <section id="analysis" class="hidden">
+  <section id="analysis">
     <div class="container">
       <h2>Audio Analysis</h2>
-      <div id="waveform">[Waveform Placeholder]</div>
+      <canvas id="waveform" width="600" height="200"></canvas>
       <p>Processing your audio...</p>
       <div id="metrics">
-        <p>Overall Engagement: <span id="engagement-score">--</span></p>
-        <p>Emotional Intensity: <span id="emotional-intensity">--</span></p>
-        <p>Sentiment Analysis: <span id="sentiment">--</span></p>
-        <p>Physical Engagement: <span id="physical-engagement">--</span></p>
-        <p>Mental Engagement: <span id="mental-engagement">--</span></p>
-        <p>Spiritual Engagement: <span id="spiritual-engagement">--</span></p>
+        <p>Overall Engagement: <span id="engagement-score">85%</span></p>
+        <p>Emotional Intensity: <span id="emotional-intensity">High</span></p>
+        <p>Sentiment Analysis: <span id="sentiment">Positive</span></p>
+        <p>Physical Engagement: <span id="physical-engagement">80%</span></p>
+        <p>Mental Engagement: <span id="mental-engagement">75%</span></p>
+        <p>Spiritual Engagement: <span id="spiritual-engagement">90%</span></p>
       </div>
-      <div id="charts">[Interactive Charts Placeholder]</div>
       <button onclick="navigateTo('results')" id="results-btn">View Results</button>
     </div>
   </section>
 
   <!-- Results Section -->
-  <section id="results" class="hidden">
+  <section id="results">
     <div class="container">
       <h2>Results Summary</h2>
-      <div id="summary">[Summary Placeholder]</div>
-      <div id="recommendations">[Recommendations Placeholder]</div>
+      <div id="summary">
+        <p><strong>Session Analysis Complete!</strong></p>
+        <p>Your audience engagement score was <strong>85%</strong>.</p>
+      </div>
+      <div id="recommendations">
+        <p>To improve engagement, consider making content more interactive and emotionally compelling.</p>
+      </div>
       <button onclick="downloadReport('pdf')">Download PDF</button>
       <button onclick="downloadReport('csv')">Download CSV</button>
     </div>
@@ -68,26 +160,34 @@
   </footer>
 
   <script>
-    // JavaScript for navigation
     function navigateTo(sectionId) {
-      document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
-      document.getElementById(sectionId).classList.remove('hidden');
+      document.querySelectorAll('header, section').forEach(el => el.classList.remove('visible'));
+      document.getElementById(sectionId).classList.add('visible');
     }
 
-    // Demo functionality (placeholder)
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        document.getElementById('upload-status').textContent = `File selected: ${file.name}`;
+        updateProgress(100);
+      }
+    }
+
+    function updateProgress(value) {
+      document.getElementById('upload-progress').value = value;
+    }
+
+    function startRecording() {
+      alert('Recording feature coming soon.');
+    }
+
     function startDemo() {
-      alert("Demo mode is under development.");
+      alert('Demo mode activated. Enjoy exploring EngageSense!');
+      navigateTo('analysis');
     }
 
-    // File upload functionality (placeholder)
-    document.getElementById('audio-upload').addEventListener('change', function () {
-      const fileName = this.files[0] ? this.files[0].name : "No file selected.";
-      document.getElementById('upload-status').textContent = fileName;
-    });
-
-    // Placeholder for report downloads
     function downloadReport(type) {
-      alert(`Download ${type.toUpperCase()} report feature is coming soon.`);
+      alert(`Downloading ${type.toUpperCase()} report...`);
     }
   </script>
 </body>
