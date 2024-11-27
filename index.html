@@ -3,91 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EngageSense - Real-Time Engagement Tracking</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>EngageSense - Next-Gen Audio Tracking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zona+Pro:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.5.4/dist/socket.io.min.js"></script>
   <style>
+    :root {
+      --black: #121212;
+      --dark-grey: #1E1E1E;
+      --purple: #6E55BB;
+      --white: #FFFFFF;
+      --grey: #9E9E9E;
+    }
+
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Zona Pro', sans-serif;
+      background-color: var(--black);
+      color: var(--white);
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
-      scroll-behavior: smooth;
     }
 
     header {
-      background-color: #4CAF50;
-      color: white;
-      text-align: center;
+      background-color: var(--dark-grey);
       padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     header h1 {
-      margin: 0;
       font-size: 2.5em;
+      color: var(--white);
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1em;
+      color: var(--grey);
     }
 
     nav {
-      background-color: #005a9e;
-      padding: 10px;
-      position: sticky;
-      top: 0;
       display: flex;
       justify-content: center;
+      background-color: var(--dark-grey);
+      padding: 10px;
+      gap: 20px;
     }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: 500;
+    nav button {
+      background-color: var(--dark-grey);
+      border: 2px solid var(--purple);
+      color: var(--white);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
     }
 
-    nav a:hover {
-      text-decoration: underline;
+    nav button:hover {
+      background-color: var(--purple);
     }
 
     .container {
       max-width: 1200px;
-      margin: auto;
+      margin: 20px auto;
       padding: 20px;
     }
 
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 600;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background-color: #4CAF50;
-      color: white;
-      margin: 10px;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    table {
-      width: 100%;
+    .waveform-container {
+      background: var(--dark-grey);
+      border-radius: 12px;
+      padding: 20px;
       margin: 20px 0;
-      border-collapse: collapse;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    th, td {
-      padding: 12px;
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      align-items: center;
+    }
+
+    .controls button {
+      background-color: var(--purple);
+      border: none;
+      color: var(--white);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .controls button:hover {
+      background-color: #5a44a1;
+    }
+
+    .playlist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      background: var(--dark-grey);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .playlist-item {
+      background: var(--black);
+      border-radius: 12px;
+      padding: 10px;
+      width: 180px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       text-align: center;
-      border: 1px solid #ddd;
+      cursor: pointer;
     }
 
-    th {
-      background-color: #4CAF50;
-      color: white;
+    .playlist-item img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .playlist-item p {
+      color: var(--grey);
+      font-size: 0.9em;
+    }
+
+    canvas {
+      background: var(--dark-grey);
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+      height: auto;
+      margin: 20px 0;
     }
   </style>
 </head>
@@ -100,69 +152,84 @@
 
   <!-- Navigation -->
   <nav>
-    <a href="#dataInputScreen">Data Input</a>
-    <a href="#analysisScreen">Analysis</a>
-    <a href="#feedback">Feedback</a>
+    <button id="play">▶</button>
+    <button id="pause">❚❚</button>
+    <button id="stop">■</button>
+    <button id="repeat">⟳</button>
   </nav>
 
   <!-- Content -->
   <div class="container">
-    <!-- Data Input Screen -->
-    <section id="dataInputScreen">
-      <h2>Data Input</h2>
-      <div class="status">Connecting to wearable devices...</div>
-      <button id="startStream">Start Live Data Stream</button>
-      <canvas id="liveDataChart" width="600" height="300"></canvas>
-    </section>
+    <!-- Waveform -->
+    <div class="waveform-container">
+      <h2>Waveform Visualizer</h2>
+      <canvas id="waveform" height="100"></canvas>
+    </div>
 
-    <!-- Analysis Screen -->
-    <section id="analysisScreen">
-      <h2>Analysis</h2>
-      <canvas id="analysisChart" width="600" height="300"></canvas>
-    </section>
+    <!-- Playlist -->
+    <div class="playlist">
+      <div class="playlist-item">
+        <img src="https://via.placeholder.com/150" alt="Track Cover">
+        <p>Track 1</p>
+      </div>
+      <div class="playlist-item">
+        <img src="https://via.placeholder.com/150" alt="Track Cover">
+        <p>Track 2</p>
+      </div>
+      <div class="playlist-item">
+        <img src="https://via.placeholder.com/150" alt="Track Cover">
+        <p>Track 3</p>
+      </div>
+      <div class="playlist-item">
+        <img src="https://via.placeholder.com/150" alt="Track Cover">
+        <p>Track 4</p>
+      </div>
+    </div>
 
-    <!-- Feedback Section -->
-    <section id="feedback">
-      <h2>Feedback</h2>
-      <form id="feedbackForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="feedback">Feedback:</label>
-        <textarea id="feedback" name="feedback" required></textarea>
-        <button type="submit">Submit</button>
-      </form>
-    </section>
+    <!-- Controls -->
+    <div class="controls">
+      <button id="startTracking">Start Tracking</button>
+      <button id="stopTracking">Stop Tracking</button>
+    </div>
+
+    <!-- Chart -->
+    <div>
+      <h2>Engagement Analysis</h2>
+      <canvas id="engagementChart" height="100"></canvas>
+    </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const liveDataChartCtx = document.getElementById('liveDataChart').getContext('2d');
-      const analysisChartCtx = document.getElementById('analysisChart').getContext('2d');
-      const socket = io('https://your-live-data-stream-url'); // Replace with actual URL
-
-      const liveDataChart = new Chart(liveDataChartCtx, {
-        type: 'line',
-        data: { labels: [], datasets: [{ label: 'Live Engagement', data: [], borderColor: 'blue' }] },
-        options: { scales: { x: { beginAtZero: true }, y: { beginAtZero: true } } }
-      });
-
-      const analysisChart = new Chart(analysisChartCtx, {
-        type: 'bar',
-        data: { labels: ['Physical', 'Mental', 'Emotional', 'Spiritual'], datasets: [{ data: [80, 70, 90, 85] }] },
-        options: { responsive: true }
-      });
-
-      socket.on('live-data', (data) => {
-        liveDataChart.data.labels.push(data.timestamp);
-        liveDataChart.data.datasets[0].data.push(data.value);
-        liveDataChart.update();
-      });
-
-      document.getElementById('feedbackForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Thank you for your feedback!');
-      });
+    // Initialize Chart
+    const ctx = document.getElementById('engagementChart').getContext('2d');
+    const engagementChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          { label: 'Physical', data: [], borderColor: 'blue', fill: false },
+          { label: 'Mental', data: [], borderColor: 'purple', fill: false },
+          { label: 'Emotional', data: [], borderColor: 'red', fill: false },
+          { label: 'Spiritual', data: [], borderColor: 'green', fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true, text: 'Real-Time Engagement Metrics' }
+        },
+        scales: {
+          y: { beginAtZero: true },
+          x: { title: { display: true, text: 'Time (s)' } }
+        }
+      }
     });
+
+    // Buttons functionality
+    document.getElementById('play').addEventListener('click', () => alert('Playing'));
+    document.getElementById('pause').addEventListener('click', () => alert('Paused'));
+    document.getElementById('stop').addEventListener('click', () => alert('Stopped'));
+    document.getElementById('repeat').addEventListener('click', () => alert('Repeat On'));
   </script>
 </body>
 </html>
