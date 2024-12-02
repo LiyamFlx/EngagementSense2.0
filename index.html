@@ -1,158 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EngageSense Application for Real-Time Engagement Analysis">
-    <meta name="author" content="Liyam Flexer">
-    <title>EngageSense</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        /* Global Styles */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-        }
-
-        header, footer {
-            background-color: #1f1f1f;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        h1, h2 {
-            color: #00bcd4;
-        }
-
-        button {
-            background-color: #00bcd4;
-            color: #121212;
-            border: none;
-            padding: 10px 20px;
-            margin: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #0288d1;
-        }
-
-        .container {
-            padding: 20px;
-            max-width: 800px;
-            margin: auto;
-        }
-
-        .progress-bar {
-            width: 100%;
-            background-color: #444;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .progress-bar-inner {
-            height: 10px;
-            width: 0%;
-            background-color: #00bcd4;
-            transition: width 0.5s ease-in-out;
-        }
-
-        @media screen and (max-width: 768px) {
-            h1, h2 {
-                font-size: 1.5rem;
-            }
-
-            button {
-                font-size: 14px;
-                padding: 8px 16px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Header Section -->
-    <header>
-        <h1>Welcome to EngageSense</h1>
-    </header>
-
-    <!-- Welcome Screen -->
-    <div class="container" id="welcome-screen">
-        <h2>Start Your Engagement Valuation</h2>
-        <button onclick="goToScreen('upload-record-screen')">Start New Engagement Valuation</button>
-    </div>
-
-    <!-- Upload/Record Audio Screen -->
-    <div class="container" id="upload-record-screen" style="display:none;">
-        <h2>Upload or Record Audio</h2>
-        <div>
-            <button onclick="uploadAudio()">Upload Audio</button>
-            <input type="file" id="audio-upload" accept=".mp3,.wav" style="display:none;" />
-            <button onclick="startRecording()">Record Audio</button>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-bar-inner" id="progress-bar-inner"></div>
-        </div>
-        <button onclick="goToScreen('live-analysis-screen')">Start Valuation</button>
-    </div>
-
-    <!-- Live Analysis Screen -->
-    <div class="container" id="live-analysis-screen" style="display:none;">
-        <h2>Analyzing Audio...</h2>
-        <div class="progress-bar">
-            <div class="progress-bar-inner" id="analysis-progress-bar"></div>
-        </div>
-    </div>
-
     <!-- Results Screen -->
-    <div class="container" id="results-screen" style="display:none;">
-        <h2>Engagement Analysis Results</h2>
-        <p>Key Engagement Metrics:</p>
+    <div class="container" id="results-screen">
+        <h2>Analysis Results</h2>
         <ul>
-            <li>Physical Engagement: 85%</li>
-            <li>Emotional Engagement: 78%</li>
-            <li>Mental Engagement: 90%</li>
-            <li>Spiritual Engagement: 88%</li>
+            <li><strong>Physical Engagement:</strong> 85%</li>
+            <li><strong>Emotional Engagement:</strong> 78%</li>
+            <li><strong>Mental Engagement:</strong> 90%</li>
+            <li><strong>Spiritual Engagement:</strong> 88%</li>
         </ul>
         <button onclick="downloadResults()">Download Results</button>
-        <button onclick="restart()">Start Again</button>
+        <button onclick="navigateTo('welcome-screen')">Start Again</button>
     </div>
 
-    <!-- Footer Section -->
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 EngageSense. All rights reserved.</p>
+        <p>&copy; 2024 EngageSense. All Rights Reserved.</p>
     </footer>
 
+    <!-- JavaScript -->
     <script>
-        // JavaScript to manage screen navigation
-        function goToScreen(screenId) {
-            document.querySelectorAll('.container').forEach(screen => {
-                screen.style.display = 'none';
+        // Navigation Function
+        function navigateTo(screenId) {
+            document.querySelectorAll('.container').forEach(container => {
+                container.classList.remove('active');
             });
-            document.getElementById(screenId).style.display = 'block';
+            document.getElementById(screenId).classList.add('active');
         }
 
-        function uploadAudio() {
-            document.getElementById('audio-upload').click();
+        // Trigger File Upload
+        function triggerFileUpload() {
+            document.getElementById('file-input').click();
         }
 
+        // Simulate Upload Progress
+        function simulateUpload() {
+            const progress = document.getElementById('upload-progress');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width += 10;
+                    progress.style.width = `${width}%`;
+                }
+            }, 200);
+        }
+
+        // Start Recording Simulation
         function startRecording() {
-            alert('Recording started. (Feature under development)');
+            const recordVisual = document.getElementById('record-visual');
+            recordVisual.style.display = 'block';
+            setTimeout(() => {
+                recordVisual.style.display = 'none';
+                alert('Recording complete (Simulated)');
+            }, 3000);
         }
 
+        // Simulate Analysis Progress
+        function updateProgress(elementId, finalWidth) {
+            const progress = document.getElementById(elementId);
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= finalWidth) {
+                    clearInterval(interval);
+                    navigateTo('results-screen');
+                } else {
+                    width += 10;
+                    progress.style.width = `${width}%`;
+                }
+            }, 200);
+        }
+
+        // Download Results (Simulated)
         function downloadResults() {
-            alert('Downloading results... (Feature under development)');
-        }
-
-        function restart() {
-            goToScreen('welcome-screen');
+            alert('Download started! (Simulated)');
         }
     </script>
 </body>
