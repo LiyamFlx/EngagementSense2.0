@@ -1,80 +1,77 @@
-    <!-- Results Screen -->
-    <div class="container" id="results-screen">
-        <h2>Analysis Results</h2>
-        <ul>
-            <li><strong>Physical Engagement:</strong> 85%</li>
-            <li><strong>Emotional Engagement:</strong> 78%</li>
-            <li><strong>Mental Engagement:</strong> 90%</li>
-            <li><strong>Spiritual Engagement:</strong> 88%</li>
-        </ul>
-        <button onclick="downloadResults()">Download Results</button>
-        <button onclick="navigateTo('welcome-screen')">Start Again</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngageSense</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="screen welcome-screen">
+        <h1>Welcome to EngageSense Player</h1>
+        <h3>Test the energy and the Pulse of Your Audience</h3>
+        <p>Analyze and measure audience engagement in real-time.<br>
+        Upload audio or stream live, and EngageSense<br>
+        Player uses advanced analytics to provide instant feedback on<br>
+        crowd energy, movement, and response.</p>
+        <button class="next-button">→</button>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 EngageSense. All Rights Reserved.</p>
-    </footer>
+    <div class="screen upload-track-screen hidden">
+        <h2>Upload Track</h2>
+        <p>MP3 MP4</p>
+        <div class="upload-box">
+            <div class="icon">📤</div>
+            <p>Drag & drop your files here<br>OR</p>
+            <button>Browse files</button>
+        </div>
+        <div class="progress-bar">
+            <p>Uploading files</p>
+            <div class="progress">
+                <span class="file-name">Image-100.png</span>
+                <div class="progress-indicator" style="width: 76%;"></div>
+                <span class="percentage">76%</span>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="prev-button">←</button>
+            <button class="next-button">→</button>
+        </div>
+    </div>
 
-    <!-- JavaScript -->
-    <script>
-        // Navigation Function
-        function navigateTo(screenId) {
-            document.querySelectorAll('.container').forEach(container => {
-                container.classList.remove('active');
-            });
-            document.getElementById(screenId).classList.add('active');
-        }
+    <div class="screen record-track-screen hidden">
+        <h2>Record Track</h2>
+        <div class="record-waveform"></div>
+        <div class="controls">
+            <button class="record-button">Start</button>
+            <button class="stop-button">Stop</button>
+        </div>
+        <div class="controls">
+            <button class="prev-button">←</button>
+            <button class="next-button">→</button>
+        </div>
+    </div>
 
-        // Trigger File Upload
-        function triggerFileUpload() {
-            document.getElementById('file-input').click();
-        }
-
-        // Simulate Upload Progress
-        function simulateUpload() {
-            const progress = document.getElementById('upload-progress');
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                } else {
-                    width += 10;
-                    progress.style.width = `${width}%`;
-                }
-            }, 200);
-        }
-
-        // Start Recording Simulation
-        function startRecording() {
-            const recordVisual = document.getElementById('record-visual');
-            recordVisual.style.display = 'block';
-            setTimeout(() => {
-                recordVisual.style.display = 'none';
-                alert('Recording complete (Simulated)');
-            }, 3000);
-        }
-
-        // Simulate Analysis Progress
-        function updateProgress(elementId, finalWidth) {
-            const progress = document.getElementById(elementId);
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= finalWidth) {
-                    clearInterval(interval);
-                    navigateTo('results-screen');
-                } else {
-                    width += 10;
-                    progress.style.width = `${width}%`;
-                }
-            }, 200);
-        }
-
-        // Download Results (Simulated)
-        function downloadResults() {
-            alert('Download started! (Simulated)');
-        }
-    </script>
+    <div class="screen results-screen hidden">
+        <h2>Engagement Dashboard Results</h2>
+        <div class="results-summary">
+            <div class="results-column">
+                <h3>Mental</h3>
+                <div class="chart"></div>
+                <h3>Score 1</h3>
+                <p>30%</p>
+            </div>
+            <div class="results-column">
+                <h3>Physical</h3>
+                <div class="chart"></div>
+                <h3>Score 2</h3>
+                <p>40%</p>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="prev-button">←</button>
+            <button class="next-button">→</button>
+        </div>
+    </div>
 </body>
-
 </html>
