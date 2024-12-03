@@ -4,188 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EngageSense</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
+            color: white;
         }
         .container {
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
         }
-        .card {
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
+        .container.active {
+            display: flex;
         }
         h1, h2 {
-            margin: 0 0 20px;
+            text-align: center;
         }
         button {
-            background-color: #007BFF;
+            background-color: #4CAF50;
             color: white;
-            border: none;
             padding: 10px 20px;
             margin: 10px;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
-        .hidden {
-            display: none;
-        }
-        .progress-bar {
-            width: 100%;
-            background-color: #333;
-            height: 20px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #4caf50;
-            width: 0%;
-            transition: width 0.3s;
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
         }
         canvas {
-            background-color: #2a2a2a;
+            background: #1e1e1e;
             border-radius: 10px;
-            margin: 20px 0;
+            margin-top: 20px;
+        }
+        .progress-bar {
+            background: #333;
+            height: 20px;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .progress-bar-fill {
+            background: #4CAF50;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="welcomeScreen" class="card">
-            <h1>Welcome to EngageSense</h1>
-            <p>Analyze real-time engagement across Physical, Spiritual, Mental, and Emotional dimensions.</p>
-            <button onclick="navigateTo('uploadScreen')">Start</button>
-        </div>
 
-        <div id="uploadScreen" class="card hidden">
-            <h2>Upload or Record Audio</h2>
-            <div>
-                <h3>Upload Track</h3>
-                <input type="file" id="fileInput" accept="audio/*">
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" id="uploadProgress"></div>
-                </div>
-                <button onclick="startUpload()">Upload</button>
-            </div>
-            <div>
-                <h3>Record Audio</h3>
-                <button onclick="startRecording()">Start</button>
-                <button onclick="pauseRecording()">Pause</button>
-                <button onclick="stopRecording()">Stop</button>
-                <p id="recordingStatus">Recording Time: 0:00</p>
-            </div>
-            <button onclick="navigateTo('realTimeScreen')">Next</button>
-            <button onclick="navigateTo('welcomeScreen')">Back</button>
-        </div>
+<!-- Welcome Screen -->
+<div id="welcomeScreen" class="container active">
+    <h1>Welcome to EngageSense</h1>
+    <p>Analyze real-time engagement across Physical, Spiritual, Mental, and Emotional dimensions.</p>
+    <button onclick="navigateTo('uploadScreen')">Start</button>
+</div>
 
-        <div id="realTimeScreen" class="card hidden">
-            <h2>Real-Time Engagement Data</h2>
-            <canvas id="realTimeChart" width="400" height="200"></canvas>
-            <button onclick="navigateTo('resultsScreen')">Next</button>
-            <button onclick="navigateTo('uploadScreen')">Back</button>
+<!-- Upload/Record Screen -->
+<div id="uploadScreen" class="container">
+    <h2>Upload or Record Audio</h2>
+    <div>
+        <h3>Upload Track</h3>
+        <input type="file" id="fileInput" accept="audio/*">
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="uploadProgress"></div>
         </div>
+        <button onclick="startUpload()">Upload</button>
+    </div>
+    <div>
+        <h3>Record Audio</h3>
+        <button onclick="startRecording()">Start</button>
+        <button onclick="stopRecording()">Stop</button>
+        <p id="recordingStatus">Recording Time: 0:00</p>
+    </div>
+    <button onclick="navigateTo('realTimeScreen')">Next</button>
+    <button onclick="navigateTo('welcomeScreen')">Back</button>
+</div>
 
-        <div id="resultsScreen" class="card hidden">
-            <h2>Engagement Results</h2>
-            <p>View detailed insights into the engagement levels:</p>
-            <div>
-                <p>Physical Engagement</p>
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" style="width: 75%;"></div>
-                </div>
-                <p>Spiritual Engagement</p>
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" style="width: 50%;"></div>
-                </div>
-                <p>Mental Engagement</p>
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" style="width: 90%;"></div>
-                </div>
-                <p>Emotional Engagement</p>
-                <div class="progress-bar">
-                    <div class="progress-bar-fill" style="width: 85%;"></div>
-                </div>
-            </div>
-            <button onclick="navigateTo('welcomeScreen')">Finish</button>
-            <button onclick="navigateTo('realTimeScreen')">Back</button>
+<!-- Real-Time Data Screen -->
+<div id="realTimeScreen" class="container">
+    <h2>Real-Time Engagement Data</h2>
+    <canvas id="realTimeChart" width="400" height="200"></canvas>
+    <button onclick="navigateTo('resultsScreen')">Next</button>
+    <button onclick="navigateTo('uploadScreen')">Back</button>
+</div>
+
+<!-- Results Screen -->
+<div id="resultsScreen" class="container">
+    <h2>Engagement Results</h2>
+    <p>View detailed insights into engagement levels:</p>
+    <div>
+        <p>Physical Engagement</p>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 70%;"></div>
+        </div>
+        <p>Spiritual Engagement</p>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 50%;"></div>
+        </div>
+        <p>Mental Engagement</p>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 80%;"></div>
+        </div>
+        <p>Emotional Engagement</p>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 90%;"></div>
         </div>
     </div>
+    <button onclick="navigateTo('welcomeScreen')">Finish</button>
+    <button onclick="navigateTo('realTimeScreen')">Back</button>
+</div>
 
-    <script>
-        function navigateTo(screenId) {
-            document.querySelectorAll('.card').forEach(screen => screen.classList.add('hidden'));
-            document.getElementById(screenId).classList.remove('hidden');
-        }
+<script>
+    // Navigation
+    function navigateTo(screenId) {
+        document.querySelectorAll('.container').forEach(screen => screen.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
 
-        function startUpload() {
-            const progress = document.getElementById('uploadProgress');
-            progress.style.width = '100%';
-        }
+    // Upload functionality
+    function startUpload() {
+        const progress = document.getElementById('uploadProgress');
+        progress.style.width = '100%';
+    }
 
-        let recordingInterval;
-        let recordingTime = 0;
+    // Record functionality
+    let recordingTime = 0;
+    let interval;
 
-        function startRecording() {
-            document.getElementById('recordingStatus').innerText = "Recording...";
-            recordingInterval = setInterval(() => {
-                recordingTime++;
-                document.getElementById('recordingStatus').innerText = `Recording Time: ${Math.floor(recordingTime / 60)}:${recordingTime % 60}`;
-            }, 1000);
-        }
+    function startRecording() {
+        const status = document.getElementById('recordingStatus');
+        status.textContent = 'Recording...';
+        interval = setInterval(() => {
+            recordingTime++;
+            const minutes = Math.floor(recordingTime / 60);
+            const seconds = recordingTime % 60;
+            status.textContent = `Recording Time: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }, 1000);
+    }
 
-        function pauseRecording() {
-            clearInterval(recordingInterval);
-            document.getElementById('recordingStatus').innerText = "Recording Paused";
-        }
+    function stopRecording() {
+        clearInterval(interval);
+        const status = document.getElementById('recordingStatus');
+        status.textContent = 'Recording Stopped';
+        recordingTime = 0;
+    }
 
-        function stopRecording() {
-            clearInterval(recordingInterval);
-            recordingTime = 0;
-            document.getElementById('recordingStatus').innerText = "Recording Stopped";
-        }
-
-        // Chart.js Example
-        const ctx = document.getElementById('realTimeChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Physical', 'Spiritual', 'Mental', 'Emotional'],
-                datasets: [{
-                    label: 'Engagement Levels',
-                    data: [45, 50, 60, 55],
-                    borderColor: '#4caf50',
-                    borderWidth: 2,
-                    fill: false,
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+    // Chart.js - Real-Time Chart
+    const ctx = document.getElementById('realTimeChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Physical', 'Spiritual', 'Mental', 'Emotional'],
+            datasets: [{
+                label: 'Engagement Levels',
+                data: [45, 60, 55, 70],
+                borderColor: '#4CAF50',
+                borderWidth: 2,
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
             }
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        }
+    });
+</script>
+
 </body>
 </html>
